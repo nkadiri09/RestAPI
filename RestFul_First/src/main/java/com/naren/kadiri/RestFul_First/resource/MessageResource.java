@@ -19,7 +19,7 @@ import com.naren.kadiri.RestFul_First.service.MessageService;
  * Root resource (exposed at "myresource" path)
  */
 @Path("messages")
-public class MyResource {
+public class MessageResource {
 
 	/**
 	 * Method handling HTTP GET requests. The returned object will be sent to the
