@@ -2,6 +2,7 @@ package com.naren.kadiri.RestFul_First.resource;
 
 import java.util.List;
 
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -31,14 +32,24 @@ public class MessageResource {
 	MessageService msgService = new MessageService();
 
 	@GET
-	public List<Message> getMessages(@QueryParam("year") int year, 
-									 @QueryParam("start") int start,
-									 @QueryParam("size") int size) {
+	public List<Message> getMessages(@QueryParam("year") int year, @QueryParam("start") int start,
+			@QueryParam("size") int size) {
 		if (year > 0) {
 			return msgService.getAllMessagesForYear(year);
 		}
 		if (start >= 0 && size > 0) {
 			return msgService.getAllMessagesPaginated(start, size);
+		}
+		return msgService.getAllMessages();
+	}
+
+	@GET
+	public List<Message> getMessages1(@BeanParam MessageFilter messageFilter) {
+		if (messageFilter.getYear() > 0) {
+			return msgService.getAllMessagesForYear(messageFilter.getYear());
+		}
+		if (messageFilter.getStart() >= 0 && messageFilter.getSize() > 0) {
+			return msgService.getAllMessagesPaginated(messageFilter.getStart(), messageFilter.getSize());
 		}
 		return msgService.getAllMessages();
 	}
