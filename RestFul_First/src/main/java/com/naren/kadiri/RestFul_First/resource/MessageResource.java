@@ -43,16 +43,14 @@ public class MessageResource {
 		return msgService.getAllMessages();
 	}
 
-	@GET
-	public List<Message> getMessages1(@BeanParam MessageFilter messageFilter) {
-		if (messageFilter.getYear() > 0) {
-			return msgService.getAllMessagesForYear(messageFilter.getYear());
-		}
-		if (messageFilter.getStart() >= 0 && messageFilter.getSize() > 0) {
-			return msgService.getAllMessagesPaginated(messageFilter.getStart(), messageFilter.getSize());
-		}
-		return msgService.getAllMessages();
-	}
+	/*
+	 * @GET public List<Message> getMessages1(@BeanParam MessageFilter
+	 * messageFilter) { if (messageFilter.getYear() > 0) { return
+	 * msgService.getAllMessagesForYear(messageFilter.getYear()); } if
+	 * (messageFilter.getStart() >= 0 && messageFilter.getSize() > 0) { return
+	 * msgService.getAllMessagesPaginated(messageFilter.getStart(),
+	 * messageFilter.getSize()); } return msgService.getAllMessages(); }
+	 */
 
 	@GET
 	@Path("/{messageId}")
@@ -83,6 +81,11 @@ public class MessageResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Message deleteMessage(@PathParam("messageId") Long id) {
 		return msgService.deleteMessage(id);
+	}
+
+	@Path("/{messageId}/comments")
+	public CommentResource getCommentResource() {
+		return new CommentResource();
 	}
 
 }

@@ -4,6 +4,13 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 @XmlRootElement
 public class Message {
 
@@ -12,16 +19,24 @@ public class Message {
 	private Date created;
 	private String author;
 
-	public Message(int id, String message, String author) {
-		super();
+	private Map<Long, Comment> Comments = new HashMap<Long, Comment>();
+
+	/*
+	 * public Message(int id, String message, String author) { super(); this.id =
+	 * id; this.message = message; this.author = author; this.created = new Date();
+	 * }
+	 */
+
+	public Message(int id, String message, String author, Map<Long, Comment> comments) {
+
 		this.id = id;
 		this.message = message;
 		this.created = new Date();
 		this.author = author;
+		Comments = comments;
 	}
 
 	public Message() {
-
 	}
 
 	public int getId() {
@@ -54,6 +69,15 @@ public class Message {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+
+	@XmlTransient
+	public Map<Long, Comment> getComments() {
+		return Comments;
+	}
+
+	public void setComments(Map<Long, Comment> comments) {
+		Comments = comments;
 	}
 
 }

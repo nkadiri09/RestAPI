@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.naren.kadiri.RestFul_First.dataSource.DataBaseClass;
+import com.naren.kadiri.RestFul_First.dataSource.DataBase;
 import com.naren.kadiri.RestFul_First.model.Profile;
 
 public class ProfileService {
 
-	private Map<String, Profile> profiles = DataBaseClass.getProfiles();
+	private Map<String, Profile> profiles = DataBase.getProfiles();
 
 	public ProfileService() {
 		profiles.put("koushik", new Profile(1L, "koushik", "Koushik", "Kothagal"));
