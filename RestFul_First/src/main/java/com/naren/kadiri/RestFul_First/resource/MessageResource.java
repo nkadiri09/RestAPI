@@ -1,5 +1,6 @@
 package com.naren.kadiri.RestFul_First.resource;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.ws.rs.BeanParam;
@@ -12,7 +13,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import com.naren.kadiri.RestFul_First.model.Message;
 import com.naren.kadiri.RestFul_First.service.MessageService;
@@ -21,6 +25,8 @@ import com.naren.kadiri.RestFul_First.service.MessageService;
  * Root resource (exposed at "myresource" path)
  */
 @Path("messages")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class MessageResource {
 
 	/**
@@ -54,22 +60,20 @@ public class MessageResource {
 
 	@GET
 	@Path("/{messageId}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public Message getMessage(@PathParam("messageId") Long messageId) {
 		return msgService.getMessage(messageId);
 	}
 
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Message addMessages(Message message) {
-		return msgService.addMessage(message);
+	public Response addMessages(Message message, @Context UriInfo uriInfo) {
+		Message newMessage = msgService.addMessage(message);
+		String messageId = String.valueOf(newMessage.getId());
+		URI uri = uriInfo.getAbsolutePathBuilder().path(messageId).build();
+		return Response.created(uri).entity(newMessage).build();
 	}
 
 	@PUT
 	@Path("/{messageId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	public Message updateMessage(@PathParam("messageId") int id, Message message) {
 		message.setId(id);
 		return msgService.updateMessage(message);
@@ -77,8 +81,6 @@ public class MessageResource {
 
 	@DELETE
 	@Path("/{messageId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	public Message deleteMessage(@PathParam("messageId") Long id) {
 		return msgService.deleteMessage(id);
 	}
