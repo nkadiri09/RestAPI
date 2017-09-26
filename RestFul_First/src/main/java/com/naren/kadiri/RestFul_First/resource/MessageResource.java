@@ -70,7 +70,7 @@ public class MessageResource {
 		String messageId = String.valueOf(newMessage.getId());
 		URI uri = uriInfo.getAbsolutePathBuilder().path(messageId).build();
 		return Response.created(uri).entity(newMessage).build();
-	}
+		}
 
 	@PUT
 	@Path("/{messageId}")

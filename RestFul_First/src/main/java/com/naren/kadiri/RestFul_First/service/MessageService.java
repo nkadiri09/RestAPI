@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.naren.kadiri.RestFul_First.dataSource.DataBase;
+import com.naren.kadiri.RestFul_First.exception.DataNotFoundException;
 import com.naren.kadiri.RestFul_First.model.Comment;
 import com.naren.kadiri.RestFul_First.model.Message;
 import com.sun.xml.internal.bind.v2.Messages;
@@ -41,7 +42,11 @@ public class MessageService {
 	}
 
 	public Message getMessage(Long messageId) {
-		return messages.get(messageId);
+		Message message = messages.get(messageId);
+		if (message == null) {
+			throw new DataNotFoundException("Message with Id: " + messageId + " Not fount");
+		}
+		return message;
 	}
 
 	public List<Message> getAllMessagesForYear(int year) {
