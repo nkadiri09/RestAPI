@@ -5,8 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import com.naren.kadiri.RestFul_First.dataSource.DataBase;
 import com.naren.kadiri.RestFul_First.model.Comment;
+import com.naren.kadiri.RestFul_First.model.ErrorMessage;
 import com.naren.kadiri.RestFul_First.model.Message;
 
 public class CommentService {
@@ -27,8 +33,17 @@ public class CommentService {
 	}
 
 	public Comment getComment(int messageId, int commentId) {
-
+		Message message = messages.get(messageId);
+		ErrorMessage errorMessage = new ErrorMessage("Not Found", 500, "https://javabrains.io");
+		Response response = Response.status(Status.NOT_FOUND).entity(errorMessage).build();
+		if (message == null) {
+			throw new WebApplicationException(response);
+		}
 		Map<Long, Comment> comments = messages.get(messageId).getComments();
+		Comment comment = comments.get(commentId);
+		if (comment == null) {
+			throw new NotFoundException(response);
+		}
 		return comments.get(commentId);
 		// return new Comment(1, "Narendra's Comment", "Narendra");
 	}

@@ -6,8 +6,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.naren.kadiri.RestFul_First.model.ErrorMessage;
-
-@Provider
+ 
 public class GenericException implements ExceptionMapper<Throwable> {
 
 	@Override
