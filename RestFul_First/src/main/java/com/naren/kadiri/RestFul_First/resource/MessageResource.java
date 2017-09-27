@@ -35,59 +35,82 @@ public class MessageResource {
 	 *
 	 * @return String that will be returned as a text/plain response.
 	 */
-	MessageService msgService = new MessageService();
+	MessageService messageService = new MessageService();
 
 	@GET
 	public List<Message> getMessages(@QueryParam("year") int year, @QueryParam("start") int start,
 			@QueryParam("size") int size) {
 		if (year > 0) {
-			return msgService.getAllMessagesForYear(year);
+			return messageService.getAllMessagesForYear(year);
 		}
 		if (start >= 0 && size > 0) {
-			return msgService.getAllMessagesPaginated(start, size);
+			return messageService.getAllMessagesPaginated(start, size);
 		}
-		return msgService.getAllMessages();
+		return messageService.getAllMessages();
 	}
 
 	/*
 	 * @GET public List<Message> getMessages1(@BeanParam MessageFilter
 	 * messageFilter) { if (messageFilter.getYear() > 0) { return
-	 * msgService.getAllMessagesForYear(messageFilter.getYear()); } if
+	 * messageService.getAllMessagesForYear(messageFilter.getYear()); } if
 	 * (messageFilter.getStart() >= 0 && messageFilter.getSize() > 0) { return
-	 * msgService.getAllMessagesPaginated(messageFilter.getStart(),
-	 * messageFilter.getSize()); } return msgService.getAllMessages(); }
+	 * messageService.getAllMessagesPaginated(messageFilter.getStart(),
+	 * messageFilter.getSize()); } return messageService.getAllMessages(); }
 	 */
-
-	@GET
-	@Path("/{messageId}")
-	public Message getMessage(@PathParam("messageId") Long messageId) {
-		return msgService.getMessage(messageId);
-	}
 
 	@POST
 	public Response addMessages(Message message, @Context UriInfo uriInfo) {
-		Message newMessage = msgService.addMessage(message);
+		Message newMessage = messageService.addMessage(message);
 		String messageId = String.valueOf(newMessage.getId());
 		URI uri = uriInfo.getAbsolutePathBuilder().path(messageId).build();
 		return Response.created(uri).entity(newMessage).build();
-		}
+	}
 
 	@PUT
 	@Path("/{messageId}")
 	public Message updateMessage(@PathParam("messageId") int id, Message message) {
 		message.setId(id);
-		return msgService.updateMessage(message);
+		return messageService.updateMessage(message);
 	}
 
 	@DELETE
 	@Path("/{messageId}")
 	public Message deleteMessage(@PathParam("messageId") Long id) {
-		return msgService.deleteMessage(id);
+		return messageService.deleteMessage(id);
 	}
 
 	@Path("/{messageId}/comments")
 	public CommentResource getCommentResource() {
 		return new CommentResource();
+	}
+
+	@GET
+	@Path("/{messageId}")
+	public Message getMessage(@PathParam("messageId") Long messageId, @Context UriInfo uriInfo) {
+		Message message = messageService.getMessage(messageId);
+		message.addLink(getUriForSelf(uriInfo, message), "self");
+		message.addLink(getUriForProfiles(uriInfo, message), "profile");
+		message.addLink(getUriInfoForComments(uriInfo, message), "Comments)");
+		return messageService.getMessage(messageId);
+	}
+
+	private String getUriInfoForComments(UriInfo uriInfo, Message message) {
+		String url = uriInfo.getBaseUriBuilder().path(MessageResource.class)
+				.path(MessageResource.class, "getCommentResource").path(CommentResource.class)
+				.resolveTemplate("messageId", message.getId()).path(Long.toString(message.getId())).build().toString();
+		return url;
+	}
+
+	private String getUriForProfiles(UriInfo uriInfo, Message message) {
+		String url = uriInfo.getBaseUriBuilder().path(ProfileResource.class).path(message.getAuthor()).build()
+				.toString();
+		return url;
+	}
+
+	public String getUriForSelf(UriInfo uriInfo, Message message) {
+		String url = uriInfo.getBaseUriBuilder().path(MessageResource.class).path(Long.toString(message.getId()))
+				.build().toString();
+		return url;
 	}
 
 }
